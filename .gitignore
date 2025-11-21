@@ -219,3 +219,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 module-6/deployment/docker-compose.yml
+
+# 本地环境变量，如api key等属于秘密信息，不应提交到版本库
+.env

@@ -1,7 +1,16 @@
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+# 加载 .env 文件，使 OPENAI_API_KEY 和 OPENAI_API_BASE 可用
+env_path = Path(__file__).resolve().parents[2] / ".env"
+load_dotenv(env_path)
+
 from langchain_openai import ChatOpenAI
 from langgraph.graph import MessagesState
 from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode, tools_condition
+
 
 # Tool
 def multiply(a: int, b: int) -> int:
@@ -14,7 +23,7 @@ def multiply(a: int, b: int) -> int:
     return a * b
 
 # LLM with bound tool
-llm = ChatOpenAI(model="gpt-4o")
+llm = ChatOpenAI(model="deepseek-ai/DeepSeek-V3.2-Exp", temperature=0)
 llm_with_tools = llm.bind_tools([multiply])
 
 # Node
