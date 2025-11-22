@@ -1,10 +1,23 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from rich import print as rprint
 
-# 加载 .env 文件，使 OPENAI_API_KEY 和 OPENAI_API_BASE 可用
-env_path = Path(__file__).resolve().parents[2] / ".env"
-load_dotenv(env_path)
+# 获取项目根目录（当前文件在 module-1/studio/，需要向上两级到达项目根目录）
+project_root = Path(__file__).parent.parent.parent if '__file__' in globals() else Path.cwd().parent.parent
+env_path = project_root / '.env'
+
+# 加载 .env 文件
+load_dotenv(dotenv_path=env_path)
+
+
+required_vars = ['OPENAI_API_KEY', 'OPENAI_API_BASE', 'MODEL_NAME', "LANGSMITH_API_KEY", "LANGSMITH_TRACING", "LANGSMITH_PROJECT"]
+missing_vars = [var for var in required_vars if not os.environ.get(var)]
+
+if missing_vars:
+    rprint(f"[red]警告: 以下环境变量未在 .env 文件中配置: {', '.join(missing_vars)}[/red]")
+else:
+    rprint(f"[green]✓ 环境变量已从 {env_path} 成功加载[/green]")
 
 from langchain_openai import ChatOpenAI
 from langgraph.graph import MessagesState
@@ -23,7 +36,7 @@ def multiply(a: int, b: int) -> int:
     return a * b
 
 # LLM with bound tool
-llm = ChatOpenAI(model="deepseek-ai/DeepSeek-V3.2-Exp", temperature=0)
+llm = ChatOpenAI(model="MODEL_NAME",temperature=0)
 llm_with_tools = llm.bind_tools([multiply])
 
 # Node
